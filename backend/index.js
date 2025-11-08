@@ -1,11 +1,11 @@
 const yargs = require("yargs");
 const { hideBin } = require("yargs/helpers");
-const { initRepo } = require("./controllers/init");
-const { addRepo } = require("./controllers/add");
-const { commitRepo } = require("./controllers/commit");
-const { pushRepo } = require("./controllers/push")
-const { pullRepo } = require("./controllers/pull")
-const { revertRepo } = require("./controllers/revert")
+const { initRepo } = require("./controllers/init.js");
+const { addRepo } = require("./controllers/add.js");
+const { commitRepo } = require("./controllers/commit.js");
+const { pushRepo } = require("./controllers/push.js")
+const { pullRepo } = require("./controllers/pull.js")
+const { revertRepo } = require("./controllers/revert.js")
 
 yargs(hideBin(process.argv))
     .command("init", "Initialise a new repository", {}, initRepo)
@@ -18,7 +18,9 @@ yargs(hideBin(process.argv))
                 type: "String",
             });
         },
-        addRepo
+        (argv) => {
+            addRepo(argv.file);
+        }
     )
     .command("commit <message>", "commit a new repository", (yargs) => {
         yargs.positional("message", {
@@ -26,7 +28,9 @@ yargs(hideBin(process.argv))
             type: "String",
 
         })
-    }, commitRepo)
+    }, (argv) => {
+        commitRepo(argv.message);
+    })
     .command("push", "push a new repository", {}, pushRepo)
     .command("pull", "pull a new repository", {}, pullRepo)
     .command("revert <commitID>", "revert a new repository", (yargs) => {

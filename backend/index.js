@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 // const bodyParser = require("body-parser");
 const http = require("http");
 const { Server } = require("socket.io");
+const mainRouter = require("./routes/main.router.js");
 
 const yargs = require("yargs");
 const { hideBin } = require("yargs/helpers");
@@ -79,9 +80,7 @@ function startServer() {
     .then(() => console.log("Mongodb connected"))
     .catch((err) => console.log("unable to connect", err));
 
-  app.get("/", (req, res) => {
-    res.send("hello");
-  });
+  app.use("/", mainRouter);
 
   let user = "test";
 

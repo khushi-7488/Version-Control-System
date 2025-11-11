@@ -100,7 +100,9 @@ async function getUserProfile(req, res) {
     const db = client.db("test");
     const usersCollection = db.collection("users");
 
-    const user = await usersCollection.findOne({ _id: new ObjectId(currentID) });
+    const user = await usersCollection.findOne({
+      _id: new ObjectId(currentID),
+    });
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
@@ -111,11 +113,55 @@ async function getUserProfile(req, res) {
   }
 }
 
-async function updateUserProfile(req, res) {}
-async function deleteUserProfile(req, res) {
-  res.send("delete users ");
-}
+async function updateUserProfile(req, res) {
+  const currentID = req.params.id;
+  const { email, password } = req.body;
+  try {
+    await connectClient();
+    const db = client.db("test");
+    const usersCollection = db.collection("users");
 
+    let updateFields = { email };
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      updateFields.password = hashedPassword;
+    }
+    const result = await usersCollection.findOneAndUpdate(
+      { _id: new ObjectId(currentID) },
+      { $set: updateFields },
+      { returnDocument: "after" }
+    );
+    if (!result.value) { // Check if user was found
+      return res.json({ message: "updated" });
+    }
+    res.send(result.value);
+  } catch (err) {
+    console.log("error", err);
+    res.status(500).send("server error");
+  }
+}
+async function deleteUserProfile(req, res) {
+  const currentID = req.params.id;
+  try {
+    await connectClient();
+    const db = client.db("test");
+    const usersCollection = db.collection("users");
+
+    const result = await usersCollection.deleteOne({
+      _id: new ObjectId(currentID),
+    });
+    if (result.deletedCount == 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User profile deleted" });
+  } catch (err) {
+    console.log("error", err);
+    res.status(500).send("server error");
+  }
+}
 module.exports = {
   getAllUsers,
   signup,

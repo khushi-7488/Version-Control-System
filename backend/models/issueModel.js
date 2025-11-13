@@ -1,4 +1,3 @@
-import { required } from "yargs";
 
 const { Schema } = require("mongoose");
 const mongoose = require("mongoose");
@@ -26,4 +25,4 @@ const IssueSchema = new Schema({
 
 const Issue = mongoose.model("Issue", IssueSchema);
 
-export default Issue;
+module.exports = Issue;

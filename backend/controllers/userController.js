@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { MongoClient } = require("mongodb");
 const dotenv = require("dotenv");
-const ObjectId = require("mongodb").ObjectId;
+var ObjectId = require("mongodb").ObjectId;
 
 dotenv.config();
 const uri = process.env.MONGO_URL;
@@ -122,7 +122,6 @@ async function updateUserProfile(req, res) {
     const usersCollection = db.collection("users");
 
     let updateFields = { email };
-
     if (password) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);

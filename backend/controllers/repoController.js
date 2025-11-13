@@ -99,6 +99,7 @@ async function fetchRepositoriesForCurrentUser(req, res) {
     res.status(500).send("Server error");
   }
 }
+
 async function updateRepositoryById(req, res) {
   const { id } = req.params;
   const { content, description } = req.body;
@@ -121,6 +122,7 @@ async function updateRepositoryById(req, res) {
     res.status(500).send("Server error");
   }
 }
+
 async function toggleVisibilityById(req, res) {
   const { id } = req.params;
   try {
@@ -142,6 +144,7 @@ async function toggleVisibilityById(req, res) {
   }
 
 }
+
 async function deleteRepositoryById(req, res) {
    const { id } = req.params;
   try {
@@ -151,7 +154,7 @@ async function deleteRepositoryById(req, res) {
       return res.status(404).json({ error: " repository not found" });
     }
 
-    res.json({ message: "deleted successsfully" });
+    res.json({ message: "repo deleted successsfully" });
 
   } catch (err) {
     console.error("Error during deleting :", err.message);

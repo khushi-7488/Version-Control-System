@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+
 import { useNavigate, useRoutes } from "react-router-dom";
 
 // Pages
@@ -7,7 +8,6 @@ import Profile from "./components/user/Profile";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 
-// auth context
 import { useAuth } from "./authContext";
 
 const ProjectRoutes = () => {

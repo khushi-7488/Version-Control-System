@@ -1,0 +1,13 @@
+* {
+  text-align: center;
+}
+body{
+    background-color: black;
+    color: white;
+}
+#dashboard {
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}

@@ -25,6 +25,19 @@ async function createRepository(req, res) {
 
     const result = await newRepository.save();
 
+    // push repository id into user's repositories array and return updated user
+    const updatedUser = await User.findByIdAndUpdate(
+      owner,
+      { $push: { repositories: result._id } },
+      { new: true }
+    );
+
+
+    if (!updatedUser) {
+      console.warn(`Repository created but owner ${owner} not found to update repositories array`);
+    }
+
+
     res.status(201).json({
       message: "Repository created",
       repositoryID: result._id,
@@ -51,12 +64,12 @@ async function getAllRepositories(req, res) {
 async function fetchRepositoryById(req, res) {
   const { id } = req.params;
   try {
-    const repository = await Repository.find({ _id: id })
+    const repository = await Repository.findById(id)
       .populate("owner")
       .populate("issues");
 
     if (!repository) {
-      res.status(400).json({ message: "No repository found !!" });
+      return res.status(404).json({ message: "No repository found !!" });
     }
 
     res.json(repository);
@@ -85,13 +98,29 @@ async function fetchRepositoryByName(req, res) {
 }
 
 async function fetchRepositoriesForCurrentUser(req, res) {
-  const userId = req.user;
+  // Support two ways of specifying the user:
+  // - authenticated requests with `req.user` set by auth middleware
+  // - direct requests with `:userID` route param (frontend usage)
+  const userID = req.user || req.params.userID;
 
   try {
-    const repositories = await Repository.find({ owner: userId });
+    if (!userID) {
+      return res.status(400).json({ error: "user id is required" });
+    }
 
-    if (!repositories || repositories.length == 0) {
-      return res.status(404).json({ error: "User repo not found" });
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userID)) {
+      return res.status(400).json({ error: "invalid user id" });
+    }
+
+
+    const repositories = await Repository.find({ owner: userID }).populate("owner");
+
+
+    // return empty array (200) if user has no repositories
+    if (!repositories || repositories.length === 0) {
+      return res.json({ message: "No repositories found for user", repositories: [] });
     }
     res.json({ message: "Repository found!", repositories });
   } catch (err) {
@@ -104,13 +133,13 @@ async function updateRepositoryById(req, res) {
   const { id } = req.params;
   const { content, description } = req.body;
   try {
-    const repository = await Repository.find({ _id: id });
+    const repository = await Repository.findById(id);
 
     if (!repository) {
       return res.status(404).json({ error: " repository not found" });
     }
 
-    repository.content.push(content);
+    if (content) repository.content.push(content);
     repository.description = description;
 
     const updateRepository = await repository.save();
@@ -126,7 +155,7 @@ async function updateRepositoryById(req, res) {
 async function toggleVisibilityById(req, res) {
   const { id } = req.params;
   try {
-    const repository = await Repository.find({ _id: id });
+    const repository = await Repository.findById(id);
 
     if (!repository) {
       return res.status(404).json({ error: " repository not found" });
@@ -146,9 +175,9 @@ async function toggleVisibilityById(req, res) {
 }
 
 async function deleteRepositoryById(req, res) {
-   const { id } = req.params;
+  const { id } = req.params;
   try {
-    const repository = await Repository.findByIdAndDelete({ id });
+    const repository = await Repository.findByIdAndDelete(id);
 
     if (!repository) {
       return res.status(404).json({ error: " repository not found" });

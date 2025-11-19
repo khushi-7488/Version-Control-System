@@ -14,7 +14,7 @@ const Navbar = () => {
       </div>
 
       <div class="container-fluid">
-        <Link style={{ color: "white" }} class="navbar-brand" href="#">
+        <Link style={{ color: "white" }} to="/" class="navbar-brand" href="#">
          <h3>Github</h3>
         </Link>
 

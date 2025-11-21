@@ -4,6 +4,8 @@ import Navbar from "../Navbar";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/github-mark-white.svg";
 import axios from "axios";
+import HeatMap from "@uiw/react-heat-map";
+import HeatMapProfile from "./HeatMap";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -48,6 +50,9 @@ const Profile = () => {
             <p>{userDetails.followed}</p>
             <p>following</p>
           </div>
+        </div>
+        <div className="heat-map-section">
+          <HeatMapProfile />
         </div>
       </div>
     </>

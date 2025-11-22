@@ -7,9 +7,13 @@ import axios from "axios";
 import HeatMap from "@uiw/react-heat-map";
 import HeatMapProfile from "./HeatMap";
 
+import { useAuth } from "../../authContext";
+
+
 const Profile = () => {
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState({ username: "username" });
+  const { setCurrentUser } = useAuth();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -54,6 +58,18 @@ const Profile = () => {
         <div className="heat-map-section">
           <HeatMapProfile />
         </div>
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("userId");
+            setCurrentUser(null);
+
+            window.location.href = "/auth";
+          }}
+          className="btn btn-outline-danger"
+        >
+          Logout
+        </button>
       </div>
     </>
   );
